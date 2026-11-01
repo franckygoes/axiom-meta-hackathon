@@ -1,0 +1,8 @@
+FICTIONAL DEMO — QUOTATION Q-104
+Date: 2026-10-27
+Case ID: DEMO-001
+Customer: North Workshop (fictional)
+Item: LED luminaire Model A
+Quantity: 100
+Proposed supply for the fictional North Workshop.
+No real transaction or personal data.
