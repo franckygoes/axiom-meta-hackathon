@@ -1,0 +1,10 @@
+FICTIONAL DEMO — INVOICE INV-208
+Date: 2026-10-29
+Case ID: DEMO-001
+Customer: North Workshop (fictional)
+Item: LED luminaire Model A
+Quantity: 100
+Fictional invoice for the agreed equipment.
+No real transaction or personal data.
+Completion statement: All 100 luminaires are connected, tested and fully operational.
+Payment request: Final balance for completed commissioning.

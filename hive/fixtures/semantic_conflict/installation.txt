@@ -1,0 +1,10 @@
+FICTIONAL DEMO — INSTALLATION RECORD INS-312
+Date: 2026-10-31
+Case ID: DEMO-001
+Customer: North Workshop (fictional)
+Item: LED luminaire Model A
+Quantity: 100
+Technician records the quantity installed on site.
+No real transaction or personal data.
+Site reservation: The luminaires are mounted but the east wing circuits remain disconnected.
+Handover: Commissioning is incomplete; a return visit is required.

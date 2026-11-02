@@ -6,6 +6,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from hive.evidence import collect, RUNS
+from hive.decision import record
 
 
 class EvidenceTests(unittest.TestCase):
@@ -31,6 +32,25 @@ class EvidenceTests(unittest.TestCase):
                 original = root / 'outputs/meta-incomplete/incomplete.json'
                 self.assertEqual(bundle.read('meta-incomplete/incomplete.json'), original.read_bytes())
             self.assertTrue((destination / 'report.html').is_file())
+
+    def test_matching_human_decision_is_archived(self):
+        from hive.review import ROOT, review
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            path = root / 'outputs/meta-coherent/coherent.json'
+            path.parent.mkdir(parents=True)
+            result = review(ROOT / 'fixtures/coherent')
+            # Synthetic test data, never a real API run.
+            result.update(mode='META_LIVE', meta_called=True,
+                          audit=[{'status': 'completed', 'usage': {'input_tokens': 1, 'output_tokens': 2}}])
+            path.write_text(json.dumps(result))
+            record(path, 'APPROVE', 'Test reviewer', 'Synthetic decision test')
+            _, archive, manifest = collect(root)
+            self.assertFalse(manifest['complete'])
+            with zipfile.ZipFile(archive) as bundle:
+                decisions = [n for n in bundle.namelist() if n.endswith('/decision.json')]
+                self.assertEqual(len(decisions), 1)
+                self.assertEqual(json.loads(bundle.read(decisions[0]))['decision'], 'APPROVE')
 
     def test_empty_collection_does_not_claim_success(self):
         with tempfile.TemporaryDirectory() as tmp:

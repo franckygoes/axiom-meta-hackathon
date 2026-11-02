@@ -6,6 +6,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from .review import render
+from .decision import verify
 
 RUNS = (
     ('meta-first', 'contradictory'),
@@ -14,15 +15,19 @@ RUNS = (
     ('meta-incomplete-diagnostic', 'incomplete'),
 )
 
+OPTIONAL_RUNS = (('meta-semantic-conflict', 'semantic_conflict'),
+                 ('meta-semantic-clear', 'semantic_clear'))
+
 
 def collect(root):
     stamp = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
     destination = root / 'outputs' / 'evidence' / stamp
     records, reports, files, missing = [], [], {}, []
-    for folder, case in RUNS:
+    for folder, case in (*RUNS, *OPTIONAL_RUNS):
         path = root / 'outputs' / folder / (case + '.json')
         if not path.is_file():
-            missing.append(str(path.relative_to(root)))
+            if (folder, case) in RUNS:
+                missing.append(str(path.relative_to(root)))
             continue
         raw = path.read_bytes()
         report = json.loads(raw)
@@ -49,6 +54,19 @@ def collect(root):
             files[folder + '/report.html'] = page.read_bytes()
         display = dict(report, case=folder + ' / ' + case)
         reports.append(display)
+        decision_root = path.parent / 'decisions'
+        if decision_root.is_dir():
+            for decision_folder in sorted(decision_root.iterdir()):
+                if not decision_folder.is_dir():
+                    continue
+                event = verify(decision_folder)
+                # Include only decisions for this exact archived report.
+                if event['report_sha256'] != hashlib.sha256(raw).hexdigest():
+                    continue
+                for name in ('source-report.json', 'decision.json', 'report.html'):
+                    files[folder + '/decisions/' + decision_folder.name + '/' + name] = (decision_folder / name).read_bytes()
+                reports.append(dict(report, case=folder + ' / human review',
+                                    human_decision=event['decision'], human_record=event))
     if not records:
         raise ValueError('No existing live reports found. No API calls were made.')
     manifest = {'collected_utc': stamp, 'complete': not missing,

@@ -1,10 +1,11 @@
-# AXIOM | The Governed Hive
+# AXIOM | The Governed Hive — v0.3.0
 
 Prototype de revue de dossiers fictifs pour le Meta Global AI Developer Hackathon.
 Le dossier contient un devis, une facture et un compte rendu d'installation.
 Le modèle propose une extraction, une seconde requête recherche les problèmes,
 puis des contrôles Python vérifient les preuves et les contradictions.
-La décision métier reste **PENDING** : aucune approbation automatique.
+La décision métier reste **PENDING** tant que l'apiculteur ne l'a pas enregistrée
+séparément avec une justification. Aucune approbation automatique.
 
 ## Démonstration gratuite, sans clé ni réseau
 
@@ -16,7 +17,9 @@ python3 -m hive --mode fixture
 open outputs/hive/report.html
 ```
 
-Résultats attendus : coherent ALLOW, incomplete REVIEW, contradictory REVIEW.
+Résultats hors ligne : coherent ALLOW, incomplete REVIEW, contradictory REVIEW.
+Les nouveaux semantic_conflict et semantic_clear donnent ALLOW hors ligne : les
+champs concordent, mais leur sens n’est pas évalué par le substitut déterministe.
 Le mode `OFFLINE_FIXTURE` est un substitut déterministe, **pas une inférence IA**.
 Les documents sont du texte fictif à champs explicitement étiquetés. Il ne s'agit
 pas encore d'une extraction générale de PDF, scans ou documents libres.
@@ -46,8 +49,9 @@ Références : [Quickstart Meta](https://dev.meta.ai/docs/quickstart),
 Le 2 novembre 2026, les sorties Terminal partagées par Franck montrent des essais
 META_LIVE : coherent ALLOW, contradictory REVIEW, incomplete BLOCK puis REVIEW.
 Le premier essai contradictoire dispose de deux réponses completed dans l'audit
-partagé. Les rapports complets restent sur son Mac ; leur collecte est nécessaire
-pour une revue complète. Ces quelques essais ne constituent pas une mesure de fiabilité.
+partagé. Les quatre rapports ont ensuite été examinés : voir [revue des preuves](docs/EVIDENCE_REVIEW.md).
+Ces quelques essais ne constituent pas une mesure de fiabilité. Le nouveau prompt
+du Contradicteur en v0.3 reste à tester avec Meta.
 
 ## Contrat de validation
 
@@ -66,7 +70,10 @@ les documents sont traitées comme des données, mais la résistance du modèle 
 injections devra être évaluée lors des essais réels.
 
 Les sorties restent dans `outputs/`, exclu de Git. Les rapports ne sont pas un
-journal inviolable. L'enregistrement d'une décision humaine n'est pas implémenté.
+journal inviolable. Une décision humaine peut être enregistrée avec `python -m hive.decision`.
+Elle est liée à une copie du rapport par SHA-256, sans signature ni authentification.
+APPROVE exige ALLOW ; les états REVIEW/BLOCK ne peuvent être approuvés.
+Une décision n'exécute aucun paiement ni action externe.
 
 ## Contributions et suite
 
@@ -76,7 +83,7 @@ rapport ; `tests/` vérifie les barrières sans API. Aucun ancien noyau AXIOM n'
 importé. Ce prototype a été construit pendant le hackathon avec assistance Codex.
 
 À terminer avant la soumission : essai Meta documenté après crédits, évaluation
-des sorties réelles, vidéo de démonstration de 3 minutes, vérification des règles
+des nouveaux cas sémantiques et des sorties réelles, vidéo de démonstration de 3 minutes, vérification des règles
 et accès public au dépôt demandé par les organisateurs.
 
 ## Conserver les essais et préparer la démonstration
@@ -94,3 +101,9 @@ inspecter l'archive avant de la partager. Les sorties restent exclues de Git.
 
 Le [scénario de démonstration](docs/DEMO.md) fournit un déroulé anglais de trois
 minutes et distingue les rôles du modèle, du validateur et de l'apiculteur.
+
+## Reprise guidée
+
+Voir [la séance de reprise](docs/RETURN_SESSION.md) pour les commandes exactes,
+les hypothèses des deux essais sémantiques et la décision de l’apiculteur.
+La v0.3 consigne sa version et les empreintes des prompts dans chaque rapport.

@@ -49,12 +49,12 @@ the first run was not saved; never invent it or attribute a precise cause.
 “Each run is bounded to two API calls, with no automatic retries. Reports include
 source hashes and response usage. Hashes do not establish that a document is
 true. The model can miss concerns. The final business decision stays pending:
-human decision recording is still a next step.”
+a separate human record can bind the reviewer’s decision and justification to the exact report snapshot. Approval requires the automated checks to pass; a review or block cannot be overridden as approved.”
 
 ## 2:45–3:00 — Close
 
 “AXIOM turns model proposals into reviewable evidence, with explicit checks and
-visible failures. Next we will broaden evaluation and add recorded human review.
+visible failures. Next we will broaden evaluation and strengthen reviewer authentication.
 The beekeeper stays responsible for the Hive.”
 
 ## Before recording
@@ -64,3 +64,13 @@ The beekeeper stays responsible for the Hive.”
 - Distinguish user-observed live results from automated offline tests.
 - Check current submission requirements on the event platform before submission.
 - The repository remains private; publication, PR merge and submission are separate actions.
+
+## Optional v0.3 sequence after real testing
+
+Replace part of the scenario segment with the semantic case only after examining
+its actual META_LIVE result. Show the invoice's completion claim against the
+installation reservation and the R04 citations if present. If absent, disclose
+that this model run missed the conflict; do not substitute an offline test double.
+Also inspect the resolved-reservation control for false positives. Show a recorded
+human decision only after Franck enters one himself. The presenter must distinguish
+self-declared identity and local hash consistency from authentication or tamper-proof logs.
