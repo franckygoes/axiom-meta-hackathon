@@ -43,7 +43,11 @@ uniquement en mode Meta. N'utiliser ici que les exemples fictifs.
 
 Références : [Quickstart Meta](https://dev.meta.ai/docs/quickstart),
 [Responses API](https://dev.meta.ai/docs/protocols/responses).
-L'intégration est prête à tester mais **aucun appel réel n'a été validé** à ce stade.
+Le 2 novembre 2026, les sorties Terminal partagées par Franck montrent des essais
+META_LIVE : coherent ALLOW, contradictory REVIEW, incomplete BLOCK puis REVIEW.
+Le premier essai contradictoire dispose de deux réponses completed dans l'audit
+partagé. Les rapports complets restent sur son Mac ; leur collecte est nécessaire
+pour une revue complète. Ces quelques essais ne constituent pas une mesure de fiabilité.
 
 ## Contrat de validation
 
@@ -74,3 +78,19 @@ importé. Ce prototype a été construit pendant le hackathon avec assistance Co
 À terminer avant la soumission : essai Meta documenté après crédits, évaluation
 des sorties réelles, vidéo de démonstration de 3 minutes, vérification des règles
 et accès public au dépôt demandé par les organisateurs.
+
+## Conserver les essais et préparer la démonstration
+
+```sh
+python -m hive.evidence
+```
+
+Cette commande lit les quatre dossiers de sortie connus, préserve les JSON
+originaux (y compris le premier BLOCK), et crée un ZIP daté, un manifeste avec
+empreintes et un rapport combiné sous `outputs/evidence/`. Aucun appel réseau.
+Les fichiers absents sont signalés. Aucun fichier de clé ou environnement n'est
+collecté. Les rapports contiennent leurs sources et les identifiants de réponse :
+inspecter l'archive avant de la partager. Les sorties restent exclues de Git.
+
+Le [scénario de démonstration](docs/DEMO.md) fournit un déroulé anglais de trois
+minutes et distingue les rôles du modèle, du validateur et de l'apiculteur.
