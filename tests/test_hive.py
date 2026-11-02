@@ -106,6 +106,26 @@ class HiveTests(unittest.TestCase):
         model = FakeModel(lambda d: d['documents']['quote'].update(item=d['documents']['quote']['case_id']))
         self.assertEqual(self.run_case(model=model)['status'], 'BLOCK')
 
+    def test_rejected_string_has_precise_diagnostic(self):
+        model = FakeModel(lambda d: d['documents']['invoice']['item'].update(value='LED Model A'))
+        result = self.run_case('incomplete', model)
+        self.assertEqual(result['status'], 'BLOCK')
+        self.assertEqual(result['extraction'], {})
+        self.assertEqual(model.calls, 1)
+        diagnostic = result['diagnostics'][0]
+        self.assertEqual(diagnostic['stage'], 'extraction_validation')
+        self.assertFalse(diagnostic['accepted'])
+        self.assertEqual(diagnostic['role'], 'invoice')
+        self.assertEqual(diagnostic['field'], 'item')
+        self.assertEqual(diagnostic['line'], 5)
+        self.assertEqual(diagnostic['proposed_value'], 'LED Model A')
+        self.assertEqual(diagnostic['expected_value'], 'LED luminaire Model A')
+
+    def test_valid_incomplete_still_requires_review(self):
+        result = self.run_case('incomplete', FakeModel())
+        self.assertEqual(result['status'], 'REVIEW')
+        self.assertEqual(result['diagnostics'], [])
+
 
 if __name__ == '__main__':
     unittest.main()

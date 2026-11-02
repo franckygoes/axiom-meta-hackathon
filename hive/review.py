@@ -27,7 +27,17 @@ Cite only a supplied document and exact source line for each concern.'''
 
 
 class InvalidEvidence(ValueError):
-    pass
+    def __init__(self, message, diagnostic=None):
+        super().__init__(message)
+        self.diagnostic = diagnostic
+
+
+def mismatch(message, role, field, ref, expected):
+    # Diagnostic data is untrusted and never reused as an accepted extraction.
+    diagnostic = {'role': role, 'field': field, 'line': ref['line'],
+                  'proposed_value': ref['value'], 'expected_value': expected,
+                  'source_quote': ref['quote']}
+    return InvalidEvidence(f'{role}.{field} (line {ref["line"]}): {message}', diagnostic)
 
 
 def cite(ref, sources):
@@ -63,9 +73,9 @@ def validate_extraction(data, sources):
             value = ref['value']
             if field == 'quantity':
                 if type(value) is not int or value <= 0 or str(value) != literal.strip():
-                    raise InvalidEvidence('Quantity not supported by source')
+                    raise mismatch('Quantity not supported by source', role, field, ref, literal.strip())
             elif not isinstance(value, str) or not value.strip() or value != literal.strip():
-                raise InvalidEvidence('Value not supported by source')
+                raise mismatch('Value not supported by source', role, field, ref, literal.strip())
     return docs
 
 
@@ -119,13 +129,15 @@ def review(folder, model=None):
               'created_utc': datetime.now(timezone.utc).isoformat(),
               'status': 'BLOCK', 'human_decision': 'PENDING',
               'meaning': 'ALLOW means listed checks passed, not business approval.',
-              'findings': [], 'sources': {}, 'extraction': {}, 'audit': []}
+              'findings': [], 'sources': {}, 'extraction': {}, 'audit': [],
+              'diagnostics': []}
     findings = report['findings']
 
     def flag(rule, detail, status='REVIEW', sources=None):
         findings.append({'rule': rule, 'status': status, 'detail': detail,
                          'sources': sources or []})
 
+    stage = 'source_loading'
     try:
         sources = {}
         for role in ROLES:
@@ -141,11 +153,13 @@ def review(folder, model=None):
                 'sha256': hashlib.sha256(raw).hexdigest(), 'text': sources[role]}
         if not sources:
             raise InvalidEvidence('No readable documents')
+        stage = 'extraction'
         if model is None:
             proposal = fixture_extract(sources)
         else:
             report['meta_called'] = True
             proposal = model(EXTRACTION, sources)
+        stage = 'extraction_validation'
         docs = validate_extraction(proposal, sources)
         report['extraction'] = docs
         for field in FIELDS:
@@ -160,6 +174,7 @@ def review(folder, model=None):
                     refs.append(dict(ref, role=role))
             if len(set(values.values())) > 1:
                 flag('R03', 'Conflicting ' + field + ': ' + json.dumps(values), sources=refs)
+        stage = 'challenge'
         challenge = {'concerns': []} if model is None else model(
             CHALLENGE, {'sources': sources, 'extraction': docs})
         if not isinstance(challenge, dict) or set(challenge) != {'concerns'} or not isinstance(challenge['concerns'], list):
@@ -177,6 +192,10 @@ def review(folder, model=None):
         # Never serialize SDK exception bodies: they may contain credentials or source data.
         detail = str(exc) if isinstance(exc, InvalidEvidence) else 'Processing failed; check configuration or model response.'
         flag('R00', detail, 'BLOCK')
+        diagnostic = {'stage': stage, 'accepted': False, 'reason': detail}
+        if isinstance(exc, InvalidEvidence) and exc.diagnostic:
+            diagnostic.update(exc.diagnostic)
+        report['diagnostics'].append(diagnostic)
     report['audit'] = getattr(model, 'audit', [])
     report['status'] = 'BLOCK' if any(f['status'] == 'BLOCK' for f in findings) else 'REVIEW' if findings else 'ALLOW'
     return report
@@ -210,6 +229,8 @@ def main():
     for r in reports:
         (args.output / (r['case'] + '.json')).write_text(json.dumps(r, indent=2) + '\n', encoding='utf-8')
         print(r['case'] + ': ' + r['status'] + ' [' + r['mode'] + ']')
+        for diagnostic in r['diagnostics']:
+            print('Diagnostic: ' + json.dumps(diagnostic, ensure_ascii=True))
     (args.output / 'report.html').write_text(render(reports), encoding='utf-8')
     print('Report: ' + str(args.output / 'report.html'))
     if any(r['status'] == 'BLOCK' for r in reports):
