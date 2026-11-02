@@ -1,76 +1,78 @@
-# AXIOM — demonstration rehearsal
+# AXIOM — final recording script
 
-Target duration: 3 minutes. Speak in English for an international audience.
-Show existing META_LIVE reports; explicitly identify this as a replay of recorded
-runs, not a new live inference. Do not show the API key or billing information.
+Target: under three minutes, approximately 330 spoken words. Rehearse once.
+This is a replay of recorded Meta API runs on fictional, labeled text documents.
+Opening these reports makes no API calls. Keep API keys and billing off screen.
 
-## 0:00–0:25 — The problem
+## Prepare the three browser tabs (Mac)
 
-“A quotation and an invoice can agree while the installation record tells a
-different story. AXIOM helps a reviewer compare that evidence. I am Franck Melka,
-and I call this approach the Governed Hive: specialized bees work within explicit
-rules, while the beekeeper keeps authority over the final decision.”
+```sh
+cd ~/dev/axiom-meta-hackathon
+open outputs/meta-semantic-conflict/report.html
+open outputs/meta-semantic-clear/report.html
+open outputs/meta-semantic-conflict/decisions/20261102T153132723844Z-92396514a2ee/report.html
+```
 
-## 0:25–0:55 — What actually runs
+Use the first tab for the problem and citations, second for the resolved control,
+third for the human decision. The recording shows existing evidence, not a new run.
 
-“The Analyst uses Meta Muse Spark to extract fields and cite source lines. The
-Contradictor is a second, independent request to the same model, looking for
-unsupported claims or contradictions. Python checks the citations, field values
-and cross-document consistency. These are two model stages and a deterministic
-validator, not a swarm of independently deployed agents.”
+## 0:00–0:25 — Problem and introduction
 
-Show source text and one extraction citation. Documents are fictional, explicitly
-labeled text; do not describe this version as general PDF understanding.
+“I'm Franck Melka, and this is AXIOM, the Governed Hive. A quotation, an invoice
+and an installation report can agree on quantities while disagreeing on whether
+the work is complete. AXIOM helps a human reviewer investigate that gap.
+These are fictional documents and recorded Meta API results.”
 
-## 0:55–1:35 — Three scenarios
+## 0:25–0:55 — Architecture
 
-“These are recorded API runs. The coherent dossier passed the listed checks.
-The contradictory dossier had 100 units quoted and invoiced, but only 60 installed.
-The local validator flagged the discrepancy. A missing installation document also
-requires human review. ALLOW means checks passed; it does not authorize payment.”
+“The Analyst uses Meta Muse Spark to extract labeled fields with source citations.
+A second request to the same model, the Contradictor, examines the original text.
+Python validates exact citations, extracted values and local consistency rules.
+The beekeeper, the human reviewer, retains the business decision.
+Two model requests maximum, with no automatic retries.”
 
-Show coherent, contradictory and the latest incomplete report. Do not claim
-that the Contradictor detected the quantity discrepancy unless its R04 findings
-actually demonstrate that; the observed first report has an R03 local finding.
+Show the four stages and expand Accepted extraction briefly.
 
-## 1:35–2:15 — The failure is part of the evidence
+## 0:55–1:35 — The semantic conflict
 
-“The first incomplete-dossier run was blocked because an extracted value did not
-match its cited source. We retained that failure. We then improved diagnostic
-detail without relaxing acceptance rules. A subsequent run passed validation
-and remained under review because the document was missing. That success does
-not explain the original mismatch or establish reliability across future runs.”
+“Here, all three documents report one hundred units. Quantity checks alone pass.
+But the invoice says commissioning is complete, while the installation report
+says circuits remain disconnected and a return visit is required.
+The Contradictor raised two concerns. These highlighted quotations link each
+concern to the source text. The result is REVIEW: a person must investigate.
+Exact citations establish what the document says, not whether it is true.”
 
-Show the first BLOCK alongside the subsequent REVIEW. The rejected value from
-the first run was not saved; never invent it or attribute a precise cause.
+Show both R04 findings and their citations slowly.
 
-## 2:15–2:45 — Governance and limits
+## 1:35–1:55 — Control case
 
-“Each run is bounded to two API calls, with no automatic retries. Reports include
-source hashes and response usage. Hashes do not establish that a document is
-true. The model can miss concerns. The final business decision stays pending:
-a separate human record can bind the reviewer’s decision and justification to the exact report snapshot. Approval requires the automated checks to pass; a review or block cannot be overridden as approved.”
+“In this second dossier, an earlier reservation was explicitly resolved before
+handover. This recorded run raised no additional concern and returned ALLOW.
+ALLOW means the listed checks passed. It never authorizes payment.”
 
-## 2:45–3:00 — Close
+Switch to semantic_clear, show result and source resolution.
 
-“AXIOM turns model proposals into reviewable evidence, with explicit checks and
-visible failures. Next we will broaden evaluation and strengthen reviewer authentication.
-The beekeeper stays responsible for the Hive.”
+## 1:55–2:30 — Human decision
 
-## Before recording
+“I reviewed the conflict and recorded REQUEST_CHANGES, asking for evidence of
+resolution and clarification of the invoice before approval.
+The decision is stored separately, with my reason and a hash linking it to this
+exact report snapshot. The original REVIEW remains unchanged.
+This is a local, self-declared reviewer record, not authenticated signing.”
 
-- Run `python -m hive.evidence` to preserve all four existing runs without API use.
-- Inspect the resulting combined report and manifest; keep the original BLOCK.
-- Distinguish user-observed live results from automated offline tests.
-- Check current submission requirements on the event platform before submission.
-- The repository remains private; publication, PR merge and submission are separate actions.
+Switch to the decision tab; show Recorded human decision and justification.
 
-## Optional v0.3 sequence after real testing
+## 2:30–2:55 — Evidence and limits
 
-Replace part of the scenario segment with the semantic case only after examining
-its actual META_LIVE result. Show the invoice's completion claim against the
-installation reservation and the R04 citations if present. If absent, disclose
-that this model run missed the conflict; do not substitute an offline test double.
-Also inspect the resolved-reservation control for false positives. Show a recorded
-human decision only after Franck enters one himself. The presenter must distinguish
-self-declared identity and local hash consistency from authentication or tamper-proof logs.
+“We preserved all six trials, including an initial extraction failure that was
+blocked. Twenty-eight offline tests check the software safeguards; they do not
+measure model accuracy. Next steps are broader evaluation and reviewer authentication.
+AXIOM makes proposals inspectable and keeps business authority with the beekeeper.”
+
+End on the human decision. Leave a few seconds of margin.
+
+## Remaining delivery steps
+
+Record and inspect audio, legibility and duration. Check current event requirements
+and submission fields before publication. Repository publication, PR merge and final
+submission are separate actions. Do not repeat API calls solely to record the video.

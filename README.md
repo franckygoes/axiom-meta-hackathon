@@ -24,7 +24,7 @@ Le mode `OFFLINE_FIXTURE` est un substitut déterministe, **pas une inférence I
 Les documents sont du texte fictif à champs explicitement étiquetés. Il ne s'agit
 pas encore d'une extraction générale de PDF, scans ou documents libres.
 
-## Essai Meta : seulement après réception des crédits
+## Essai Meta : crédits disponibles ou facturation acceptée
 
 Activer l'environnement `.venv`, installer les dépendances existantes, puis définir
 `MODEL_API_KEY` dans le terminal sans l'inscrire dans un fichier versionné.
@@ -50,8 +50,10 @@ Le 2 novembre 2026, les sorties Terminal partagées par Franck montrent des essa
 META_LIVE : coherent ALLOW, contradictory REVIEW, incomplete BLOCK puis REVIEW.
 Le premier essai contradictoire dispose de deux réponses completed dans l'audit
 partagé. Les quatre rapports ont ensuite été examinés : voir [revue des preuves](docs/EVIDENCE_REVIEW.md).
-Ces quelques essais ne constituent pas une mesure de fiabilité. Le nouveau prompt
-du Contradicteur en v0.3 reste à tester avec Meta.
+Les deux essais sémantiques v0.3 ont ensuite été examinés : semantic_conflict
+REVIEW avec deux constats R04, semantic_clear ALLOW sans constat supplémentaire.
+Franck a enregistré REQUEST_CHANGES sur le conflit. Les six essais, dont le
+premier BLOCK, sont conservés. Ces quelques essais ne mesurent pas la fiabilité générale.
 
 ## Contrat de validation
 
@@ -82,9 +84,9 @@ le parcours à deux étapes, les documents texte, les preuves contrôlées et le
 rapport ; `tests/` vérifie les barrières sans API. Aucun ancien noyau AXIOM n'est
 importé. Ce prototype a été construit pendant le hackathon avec assistance Codex.
 
-À terminer avant la soumission : essai Meta documenté après crédits, évaluation
-des nouveaux cas sémantiques et des sorties réelles, vidéo de démonstration de 3 minutes, vérification des règles
-et accès public au dépôt demandé par les organisateurs.
+À terminer avant la soumission : vidéo de démonstration de trois minutes,
+vérification des règles et du formulaire, puis accès au dépôt conforme aux exigences
+des organisateurs. Les essais réels et la décision humaine sont documentés.
 
 ## Conserver les essais et préparer la démonstration
 
@@ -92,7 +94,8 @@ et accès public au dépôt demandé par les organisateurs.
 python -m hive.evidence
 ```
 
-Cette commande lit les quatre dossiers de sortie connus, préserve les JSON
+Cette commande lit les quatre essais initiaux et les deux essais sémantiques présents,
+collecte les décisions liées aux rapports, préserve les JSON
 originaux (y compris le premier BLOCK), et crée un ZIP daté, un manifeste avec
 empreintes et un rapport combiné sous `outputs/evidence/`. Aucun appel réseau.
 Les fichiers absents sont signalés. Aucun fichier de clé ou environnement n'est
